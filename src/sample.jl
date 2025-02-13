@@ -39,7 +39,8 @@ end
 function parallel_sample!(estimator::Estimator{<:AbstractIndexSet, <:MC}, index::Index, Istart::Integer, Iend::Integer)
 
     m = estimator[:nb_of_uncertainties](index)
-    f(i) = estimator.sample_function(index, transform.(view(distributions(estimator), 1:m), rand(m)))
+    rand_samples = [rand(m) for _ = Istart:Iend]
+    f(i) = estimator.sample_function(index, transform.(view(distributions(estimator), 1:m), rand_samples[i-Istart+1]))
     all_workers = workers()
     worker_idcs = 1:min(estimator[:nb_of_workers](index), nworkers())
     pool = CachingPool(all_workers[worker_idcs])
