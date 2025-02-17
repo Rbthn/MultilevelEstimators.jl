@@ -20,6 +20,7 @@ default_options(::AbstractIndexSet, ::AbstractSampleMethod) = [:nb_of_warm_up_sa
                                                                :name,
                                                                :cost_model,
                                                                :nb_of_workers,
+                                                               :worker_ids,
                                                                :nb_of_uncertainties,
                                                                :max_index_set_param,
 															   :min_index_set_param]

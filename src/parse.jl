@@ -233,6 +233,22 @@ struct EmptyFunction <: Function end
         end
        )
 
+## worker_ids ##
+@parse!(:worker_ids,
+        i -> workers(),
+        begin
+            check_type(to_string(key, val)..., Union{Vector{Integer}, Function})
+            if val isa Vector{Integer}
+                valid_workers = workers()
+                for v in val
+                    v ∈ valid_workers || throw(ArgumentError(string("in Estimator, optional key worker_ids must return valid worker ids")))
+                end
+                delete!(options, val)
+                options[key] = i -> val
+            end
+        end
+       )
+
 ## nb_of_shifts ##
 @parse!(:nb_of_shifts,
         i -> 10,

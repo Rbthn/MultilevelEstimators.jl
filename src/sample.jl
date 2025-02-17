@@ -40,10 +40,10 @@ function parallel_sample!(estimator::Estimator{<:AbstractIndexSet, <:MC}, index:
 
     m = estimator[:nb_of_uncertainties](index)
     rand_samples = [rand(m) for _ = Istart:Iend]
-    f(i) = estimator.sample_function(index, transform.(view(distributions(estimator), 1:m), rand_samples[i-Istart+1]))
-    all_workers = workers()
-    worker_idcs = 1:min(estimator[:nb_of_workers](index), nworkers())
-    pool = CachingPool(all_workers[worker_idcs])
+    f(i) = estimator.sample_function(index, transform.(view(distributions(estimator), 1:m), rand_samples[i-Istart+1]), i - Istart + 1)
+    avail_workers = estimator[:worker_ids](index)
+    worker_idcs = 1:min(estimator[:nb_of_workers](index), length(avail_workers))
+    pool = CachingPool(avail_workers[worker_idcs])
     #batch_size = ceil(Int, (Iend - Istart + 1)/length(worker_idcs))
     batch_size = 1
     retry_delays = ExponentialBackOff(n = 3)
